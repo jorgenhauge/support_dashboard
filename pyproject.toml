@@ -19,7 +19,8 @@ classifiers = [
 dependencies = [
   "pandas",
   "matplotlib",
-  "pytest"
+  "pytest",
+  "flake8"
 ]
 
 [project.optional-dependencies]
