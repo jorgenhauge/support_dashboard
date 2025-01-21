@@ -43,19 +43,8 @@ class DataLogger:
     def score(self):
         return self.data["tilfredshet"]
 
-    def inquiries(self, _from: str, _to: str):
-        return self.at_time.between(_from, _to)
-
     def __str__(self) -> str:
-        return f"""Number of inquiries: {self.weekdays.value_counts()}
-            Number of inquiries(08:00 - 10:00): {self.inquiries("08:00", "10:00").value_counts()},
-            (10:00 - 12:00): {self.inquiries("10:00", "12:00").value_counts()},
-            (12:00 - 14:00): {self.inquiries("12:00", "14:00").value_counts()},
-            (12:00 - 14:00): {self.inquiries("14:00", "16:00").value_counts()}
-            Longest inquire time: {self.durations.max().time():"%H:%M:%S"}
-            Shortest inquire time: {self.durations.min().time():"%H:%M:%S"}
-            Mean inquire time: {self.durations.mean().time():"%H:%M:%S"}
-            """
+        return f"{self._format_string},{self._labels},{self._converters},{self.data}"
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(data={self.data}, format_string={self._format_string})"
@@ -124,10 +113,10 @@ def main():
             "14:00 -> 16:00",
         ]
         i = [
-            int(dl.inquiries("08:00", "10:00").sum()),
-            int(dl.inquiries("10:00", "12:00").sum()),
-            int(dl.inquiries("12:00", "14:00").sum()),
-            int(dl.inquiries("14:00", "16:00").sum()),
+            int(dl.at_time.between("08:00", "10:00").sum()),
+            int(dl.at_time.between("10:00", "12:00").sum()),
+            int(dl.at_time.between("12:00", "14:00").sum()),
+            int(dl.at_time.between("14:00", "16:00").sum()),
         ]
         print(dict(zip(labels, i)))
 
