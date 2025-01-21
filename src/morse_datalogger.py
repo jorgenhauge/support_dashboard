@@ -2,13 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pathlib
 import argparse
+import typing
 
 
 class DataLogger:
     def __init__(self) -> None:
         self._format_string: str = "%H:%M:%S"
         self._labels = ["u_dag", "kl_slett", "varighet", "tilfredshet"]
-        self._converters = {
+        self._converters: typing.Mapping = {
             "u_dag": str,
             "kl_slett": lambda ts: pd.to_datetime(ts),
             "varighet": lambda ts: pd.to_datetime(ts),
