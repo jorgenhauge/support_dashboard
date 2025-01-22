@@ -18,30 +18,17 @@ class DataLogger:
         self.data = self._get_data()
 
     def _get_data(self):
-        p = pathlib.Path(__file__).parent / "support_uke_24.xlsx"
-        filename = p.absolute()
-        data_xlsx: pd.DataFrame = pd.read_excel(
-            filename,
-            names=self._labels,
-            converters=self._converters,
-        )
-        return data_xlsx
-
-    @property
-    def weekdays(self):
-        return self.data["u_dag"]
-
-    @property
-    def at_time(self):
-        return self.data["kl_slett"]
-
-    @property
-    def durations(self):
-        return self.data["varighet"]
-
-    @property
-    def score(self):
-        return self.data["tilfredshet"]
+        try:
+            p = pathlib.Path(__file__).parent / "support_uke_24.xlsx"
+            filename = p.absolute()
+            data_xlsx: pd.DataFrame = pd.read_excel(
+                filename,
+                names=self._labels,
+                converters=self._converters,
+            )
+            return data_xlsx
+        except FileNotFoundError as e:
+            print(f"File cannot be open and read: ", e)
 
     def __str__(self) -> str:
         return f"{self._format_string},{self._labels},{self._converters},{self.data}"
@@ -94,16 +81,16 @@ def main():
     args = parser.parse_args()
 
     if args.weekday_inquiries_per_day:
-        print(dl.weekdays.value_counts())
+        print(dl.data["u_dag"].value_counts())
 
     if args.shortest_inquiry_time:
-        print(f'Shortest inquiry time: {dl.durations.min().time():"%H:%M:%S"}')
+        print(f'Shortest inquiry time: {dl.data["varighet"].min().time():"%H:%M:%S"}')
 
     if args.longest_inquiry_time:
-        print(f'Longest inquiry time: {dl.durations.max().time():"%H:%M:%S"}')
+        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')
 
     if args.mean_inquiries_time:
-        print(f'Mean inquiries time: {dl.durations.mean().time():"%H:%M:%S"}')
+        print(f'Mean inquiries time: {dl.data["varighet"].mean().time():"%H:%M:%S"}')
 
     if args.inquiries_between:
         labels = [
@@ -112,19 +99,21 @@ def main():
             "12:00 -> 14:00",
             "14:00 -> 16:00",
         ]
+        t = dl.data["kl_slett"]
         i = [
-            int(dl.at_time.between("08:00", "10:00").sum()),
-            int(dl.at_time.between("10:00", "12:00").sum()),
-            int(dl.at_time.between("12:00", "14:00").sum()),
-            int(dl.at_time.between("14:00", "16:00").sum()),
+            int(t.between("08:00", "10:00").sum()),
+            int(t.between("10:00", "12:00").sum()),
+            int(t.between("12:00", "14:00").sum()),
+            int(t.between("14:00", "16:00").sum()),
         ]
         print(dict(zip(labels, i)))
 
     if args.net_promoter_score:
-        detractors = dl.score.between(1, 6, inclusive="both").sum()
-        passives = dl.score.between(7, 8, inclusive="both").sum()
-        promoters = dl.score.between(9, 10, inclusive="both").sum()
-        total = dl.score.notna().sum()
+        s = dl.data["tilfredshet"]
+        detractors = s.between(1, 6, inclusive="both").sum()
+        passives = s.between(7, 8, inclusive="both").sum()
+        promoters = s.between(9, 10, inclusive="both").sum()
+        total = s.notna().sum()
         nps = ((promoters - detractors) / total) * 100
         print(f"NPS: {nps:.2f} %")
         # print(f"DETRACTORS: {(detractors / total) * 100:.2f} %")
