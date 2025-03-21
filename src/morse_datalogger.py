@@ -48,18 +48,13 @@ def main():
         action="store_true",
     )
     parser.add_argument(
-        "--shortest-inquiry-time",
-        help="Show shortest customer inquiry time",
+        "--shortest-and-longest-inquiry-time",
+        help="Print shortest and longest customer inquiry time",
         action="store_true",
     )
     parser.add_argument(
-        "--longest-inquiry-time",
-        help="Show longest customer inquiry time",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--mean-inquiries-time",
-        help="Show mean customer inquiries time for the week",
+        "--mean-inquiry-time",
+        help="Print mean customer inquiry time for the week",
         action="store_true",
     )
     parser.add_argument(
