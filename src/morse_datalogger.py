@@ -44,7 +44,7 @@ def main():
     )
     parser.add_argument(
         "--weekday-inquiries-per-day",
-        help="Show number of customer inquiries for each day",
+        help="Bar plot number of customer inquiries for each day",
         action="store_true",
     )
     parser.add_argument(
