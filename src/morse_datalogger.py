@@ -28,7 +28,7 @@ class DataLogger:
             )
             return data_xlsx
         except FileNotFoundError as e:
-            print(f"File cannot be open and read: ", e)
+            raise e
 
     def __str__(self) -> str:
         return f"{self._format_string},{self._labels},{self._converters},{self.data}"
