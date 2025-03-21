@@ -82,7 +82,7 @@ def main():
 
     if args.shortest_and_longest_inquiry_time:
         print(f'Shortest inquiry time: {dl.data["varighet"].min().time():"%H:%M:%S"}')
-        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')       
+        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')
 
     if args.mean_inquiry_time:
         print(f'Mean inquiry time: {dl.data["varighet"].mean().time():"%H:%M:%S"}')
