@@ -80,14 +80,12 @@ def main():
         s.plot(kind="bar", ylabel="Number of inquiries per day")
         plt.show()
 
-    if args.shortest_inquiry_time:
+    if args.shortest_and_longest_inquiry_time:
         print(f'Shortest inquiry time: {dl.data["varighet"].min().time():"%H:%M:%S"}')
+        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')       
 
-    if args.longest_inquiry_time:
-        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')
-
-    if args.mean_inquiries_time:
-        print(f'Mean inquiries time: {dl.data["varighet"].mean().time():"%H:%M:%S"}')
+    if args.mean_inquiry_time:
+        print(f'Mean inquiry time: {dl.data["varighet"].mean().time():"%H:%M:%S"}')
 
     if args.inquiries_between:
         labels = [
