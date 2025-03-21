@@ -76,7 +76,9 @@ def main():
     args = parser.parse_args()
 
     if args.weekday_inquiries_per_day:
-        print(dl.data["u_dag"].value_counts())
+        s = dl.data["u_dag"].value_counts()
+        s.plot(kind="bar", ylabel="Number of inquiries per day")
+        plt.show()
 
     if args.shortest_inquiry_time:
         print(f'Shortest inquiry time: {dl.data["varighet"].min().time():"%H:%M:%S"}')
