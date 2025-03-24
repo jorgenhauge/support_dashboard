@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import datetime
 import pathlib
 import argparse
 import typing
@@ -7,7 +8,7 @@ import typing
 
 class DataLogger:
     def __init__(self) -> None:
-        self._format_string: str = "%H:%M:%S"
+        self._format_string: str = "h%H:m%M:s%S"
         self._labels = ["u_dag", "kl_slett", "varighet", "tilfredshet"]
         self._converters: typing.Mapping = {
             "u_dag": str,
@@ -29,6 +30,25 @@ class DataLogger:
             return data_xlsx
         except FileNotFoundError as e:
             raise e
+
+    @property
+    def min_inquiry_time(self) -> str:
+        vt = self.data["varighet"].min().time()
+        return vt.strftime(self._format_string)
+
+    @property
+    def max_inquiry_time(self) -> str:
+        vt = self.data["varighet"].max().time()
+        return vt.strftime(self._format_string)
+
+    @property
+    def mean_inquiry_time(self) -> str:
+        vt = self.data["varighet"].mean().time()
+        return vt.strftime(self._format_string)
+
+    def sum_inquries_between(self, start_time, end_time):
+        inq = self.data["kl_slett"].between(start_time, end_time)
+        return int(inq.sum())
 
     def __str__(self) -> str:
         return f"{self._format_string},{self._labels},{self._converters},{self.data}"
@@ -81,11 +101,11 @@ def main():
         plt.show()
 
     if args.shortest_and_longest_inquiry_time:
-        print(f'Shortest inquiry time: {dl.data["varighet"].min().time():"%H:%M:%S"}')
-        print(f'Longest inquiry time: {dl.data["varighet"].max().time():"%H:%M:%S"}')
+        print(f"Shortest inquiry time: {dl.min_inquiry_time}")
+        print(f"Longest inquiry time: {dl.max_inquiry_time}")
 
     if args.mean_inquiry_time:
-        print(f'Mean inquiry time: {dl.data["varighet"].mean().time():"%H:%M:%S"}')
+        print(f"Mean inquiry time: {dl.mean_inquiry_time}")
 
     if args.inquiries_between:
         labels = [
@@ -94,12 +114,23 @@ def main():
             "12:00 -> 14:00",
             "14:00 -> 16:00",
         ]
-        t = dl.data["kl_slett"]
         i = [
-            int(t.between("08:00", "10:00").sum()),
-            int(t.between("10:00", "12:00").sum()),
-            int(t.between("12:00", "14:00").sum()),
-            int(t.between("14:00", "16:00").sum()),
+            dl.sum_inquries_between(
+                datetime.time(hour=8, minute=00).isoformat(),
+                datetime.time(hour=10, minute=00).isoformat(),
+            ),
+            dl.sum_inquries_between(
+                datetime.time(hour=10, minute=00).isoformat(),
+                datetime.time(hour=12, minute=00).isoformat(),
+            ),
+            dl.sum_inquries_between(
+                datetime.time(hour=12, minute=00).isoformat(),
+                datetime.time(hour=14, minute=00).isoformat(),
+            ),
+            dl.sum_inquries_between(
+                datetime.time(hour=14, minute=00).isoformat(),
+                datetime.time(hour=16, minute=00).isoformat(),
+            ),
         ]
         print(dict(zip(labels, i)))
 
