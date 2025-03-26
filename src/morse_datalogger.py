@@ -18,7 +18,7 @@ class DataLogger:
         }
         self.data = self._get_data()
 
-    def _get_data(self):
+    def _get_data(self) -> pd.DataFrame:
         try:
             p = pathlib.Path(__file__).parent / "support_uke_24.xlsx"
             filename = p.absolute()
@@ -46,7 +46,7 @@ class DataLogger:
         vt = self.data["varighet"].mean().time()
         return vt.strftime(self._format_string)
 
-    def sum_inquries_between(self, start_time, end_time):
+    def sum_inquries_between(self, start_time, end_time) -> int:
         inq = self.data["kl_slett"].between(start_time, end_time)
         return int(inq.sum())
 
