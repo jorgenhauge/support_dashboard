@@ -18,6 +18,7 @@ class DataLogger:
         }
         self.data = self._get_data()
 
+    # a
     def _get_data(self) -> pd.DataFrame:
         try:
             p = pathlib.Path(__file__).parent / "support_uke_24.xlsx"
@@ -82,31 +83,37 @@ def main():
         help="Show number of customer inquiries between hours",
         action="store_true",
     )
+    inquiries = parser.add_argument_group("inquiries")
+
+    inquiries.add_argument(
+        "--plot",
+        help="Show pie plot for customer inquiries between hours",
+        action="store_true",
+    )
+
     parser.add_argument(
         "--net-promoter-score",
         help="Show net promoter score for customer inquiries",
         action="store_true",
     )
-    parser.add_argument(
-        "-pp",
-        "--pie-plot",
-        help="Show pie plot for customer inquiries between hours",
-        action="store_true",
-    )
     args = parser.parse_args()
 
+    # b
     if args.weekday_inquiries_per_day:
         s = dl.data["u_dag"].value_counts()
         s.plot(kind="bar", ylabel="Number of inquiries per day")
         plt.show()
 
+    # c
     if args.shortest_and_longest_inquiry_time:
         print(f"Shortest inquiry time: {dl.min_inquiry_time}")
         print(f"Longest inquiry time: {dl.max_inquiry_time}")
 
+    # d
     if args.mean_inquiry_time:
         print(f"Mean inquiry time: {dl.mean_inquiry_time}")
 
+    # e
     if args.inquiries_between:
         labels = [
             "08:00 -> 10:00",
@@ -132,8 +139,24 @@ def main():
                 datetime.time(hour=16, minute=00).isoformat(),
             ),
         ]
-        print(dict(zip(labels, i)))
+        if args.plot:
+            fig1, ax1 = plt.subplots()
+            ax1.set_title("Support dashboard customer inquiries")
+            plt.pie(
+                i,
+                labels=labels,
+            )
+            plt.legend(
+                i,
+                loc="upper left",
+                labels=labels,
+                title="Number of inquiries between hours",
+            )
+            plt.show()
+        else:
+            print(dict(zip(labels, i)))
 
+    # f
     if args.net_promoter_score:
         s = dl.data["tilfredshet"]
         detractors = s.between(1, 6, inclusive="both").sum()
@@ -145,21 +168,6 @@ def main():
         # print(f"DETRACTORS: {(detractors / total) * 100:.2f} %")
         # print(f"PASSIVES: {(passives / total) * 100:.2f} %")
         # print(f"PROMOTERS: {(promoters / total) * 100:.2f} %")
-
-    if args.pie_plot:
-        fig1, ax1 = plt.subplots()
-        ax1.set_title("Support dashboard customer inquiries")
-        plt.pie(
-            i,
-            labels=labels,
-        )
-        plt.legend(
-            i,
-            loc="upper left",
-            labels=labels,
-            title="Number of inquiries between hours",
-        )
-        plt.show()
 
 
 if __name__ == "__main__":
