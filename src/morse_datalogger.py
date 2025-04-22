@@ -21,10 +21,9 @@ class DataLogger:
     # a
     def _get_data(self) -> pd.DataFrame:
         try:
-            p = pathlib.Path(__file__).parent / "support_uke_24.xlsx"
-            filename = p.absolute()
+            p = pathlib.Path("files/support_uke_24.xlsx")
             data_xlsx: pd.DataFrame = pd.read_excel(
-                filename,
+                p.absolute(),
                 names=self._labels,
                 converters=self._converters,
             )
