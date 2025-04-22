@@ -7,8 +7,8 @@ support-dashboard is a Python library for dealing with the morse_datalogger file
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install support-dashboard.
 
 ```bash
-pip install support-dashboard
-
+pip install --upgrade pip || python -m pip install --upgrade pip
+pip install . || python -m pip install .
 ```
 
 ## Run tests
